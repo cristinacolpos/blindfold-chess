@@ -3,16 +3,22 @@ import random
 import chess
 import chess.pgn
 import chess.engine
-
 import boto3
+import platform
+import os
+
 dynamodb = boto3.resource('dynamodb')
-table    = dynamodb.Table('chess')
+table = dynamodb.Table('chess')
+stockFishFile = "./engine/stockfish_14_x64"
+
+if platform.system() == "Darwin":
+    stockFishFile = "/usr/local/bin/stockfish"
 
 # Copy engine to temp and set permissions to 755
-import os, sys, stat, shutil
-shutil.copyfile("./stockfish_20011801_x64", "/tmp/stockfish_20011801_x64")
-os.chmod('/tmp/stockfish_20011801_x64', 0o755)
-engine = chess.engine.SimpleEngine.popen_uci("/tmp/stockfish_20011801_x64")
+# import os, sys, stat, shutil
+# # shutil.copyfile("./engine/stockfish_14_x64", "~/stockfish_14_x64")
+os.chmod(stockFishFile, 0o755)
+engine = chess.engine.SimpleEngine.popen_uci(stockFishFile)
 
 # Globals
 userId = False
